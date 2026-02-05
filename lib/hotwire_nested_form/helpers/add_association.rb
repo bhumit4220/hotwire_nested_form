@@ -78,7 +78,9 @@ module HotwireNestedForm
         # Determine partial name
         partial_name = partial || "#{association.to_s.singularize}_fields"
 
-        # Render the fields
+        # Render the fields using fields_for
+        # This works with both standard Rails FormBuilder and SimpleForm::FormBuilder
+        # SimpleForm overrides fields_for to use simple_fields_for internally
         form.fields_for(association, new_object, child_index: 'NEW_RECORD') do |builder|
           locals = (render_options[:locals] || {}).merge(f: builder)
           render(partial: partial_name, locals: locals)

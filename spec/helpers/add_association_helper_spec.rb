@@ -32,5 +32,24 @@ RSpec.describe HotwireNestedForm::Helpers::AddAssociation, type: :helper do
 
     # Full rendering tests are done in system specs since they require
     # proper controller context and view paths
+
+    describe 'SimpleForm compatibility' do
+      it 'detects SimpleForm builder using FormBuilderDetector' do
+        # Verify FormBuilderDetector correctly identifies SimpleForm builders
+        mock_simple_form_builder = double('SimpleForm::FormBuilder')
+        allow(mock_simple_form_builder).to receive(:class).and_return(
+          double(name: 'SimpleForm::FormBuilder')
+        )
+
+        expect(HotwireNestedForm::FormBuilderDetector.simple_form?(mock_simple_form_builder)).to be true
+      end
+
+      it 'detects standard Rails form builder' do
+        form_builder = nil
+        helper.form_with(model: project, url: '/projects') { |f| form_builder = f }
+
+        expect(HotwireNestedForm::FormBuilderDetector.simple_form?(form_builder)).to be false
+      end
+    end
   end
 end
