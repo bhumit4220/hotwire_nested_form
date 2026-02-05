@@ -1,0 +1,11 @@
+<h1><%= @project.name %></h1>
+
+<h2>Tasks</h2>
+<ul>
+  <% @project.tasks.each do |task| %>
+    <li><%= task.name %></li>
+  <% end %>
+</ul>
+
+<%= link_to "Edit", edit_project_path(@project) %>
+<%= link_to "Back", projects_path %>

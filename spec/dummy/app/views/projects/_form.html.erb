@@ -1,0 +1,33 @@
+<%= form_with model: project do |f| %>
+  <% if project.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(project.errors.count, "error") %> prohibited this project from being saved:</h2>
+      <ul>
+        <% project.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :name %>
+    <%= f.text_field :name %>
+  </div>
+
+  <div data-controller="nested-form">
+    <h3>Tasks</h3>
+
+    <div id="tasks">
+      <%= f.fields_for :tasks do |task_form| %>
+        <%= render "task_fields", f: task_form %>
+      <% end %>
+    </div>
+
+    <%= link_to_add_association "Add Task", f, :tasks, class: "add-task-link" %>
+  </div>
+
+  <div>
+    <%= f.submit %>
+  </div>
+<% end %>
