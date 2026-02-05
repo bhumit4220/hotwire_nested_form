@@ -1,4 +1,6 @@
-<div class="nested-fields">
+<div class="nested-fields" style="display: flex; align-items: center; gap: 10px; padding: 8px; margin-bottom: 8px; background: #f5f5f5; border-radius: 4px;">
+  <%= f.hidden_field :position %>
+  <span class="drag-handle" style="cursor: grab; user-select: none;">☰</span>
   <%= f.label :name, "Task Name" %>
   <%= f.text_field :name %>
   <%= link_to_remove_association "Remove", f, class: "remove-task-link" %>

@@ -8,14 +8,17 @@
     <script type="importmap">
       {
         "imports": {
-          "@hotwired/stimulus": "https://cdn.jsdelivr.net/npm/@hotwired/stimulus@3.2.2/dist/stimulus.min.js"
+          "@hotwired/stimulus": "https://cdn.jsdelivr.net/npm/@hotwired/stimulus@3.2.2/dist/stimulus.min.js",
+          "sortablejs": "https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/modular/sortable.esm.js"
         }
       }
     </script>
     <script type="module">
       import { Application, Controller } from "@hotwired/stimulus"
+      import Sortable from "sortablejs"
 
       window.Stimulus = Application.start()
+      window.Sortable = Sortable
 
       // nested-form controller
       class NestedFormController extends Controller {
@@ -23,11 +26,19 @@
           wrapperClass: { type: String, default: "nested-fields" },
           min: { type: Number, default: 0 },
           max: { type: Number, default: 999999 },
-          limitBehavior: { type: String, default: "disable" }
+          limitBehavior: { type: String, default: "disable" },
+          sortable: { type: Boolean, default: false },
+          positionField: { type: String, default: "position" },
+          sortHandle: { type: String, default: "" }
         }
 
         connect() {
           this.updateButtonStates()
+          if (this.sortableValue) this.initializeSortable()
+        }
+
+        disconnect() {
+          if (this.sortableInstance) this.sortableInstance.destroy()
         }
 
         get currentCount() {
@@ -163,6 +174,79 @@
               button.disabled = isAtLimit
               button.style.display = ""
           }
+        }
+
+        // Drag & Drop Sorting
+
+        initializeSortable() {
+          if (typeof Sortable === 'undefined') {
+            console.warn('hotwire_nested_form: SortableJS not found.')
+            return
+          }
+
+          const container = this.findSortableContainer()
+          if (!container) return
+
+          this.sortableInstance = Sortable.create(container, {
+            animation: 150,
+            handle: this.sortHandleValue || null,
+            draggable: `.${this.wrapperClassValue}`,
+            ghostClass: 'nested-form-drag-ghost',
+            chosenClass: 'nested-form-dragging',
+            onStart: (evt) => this.onSortStart(evt),
+            onEnd: (evt) => this.onSortEnd(evt)
+          })
+        }
+
+        findSortableContainer() {
+          const selectors = ['#tasks', '#items', '[data-nested-form-target="container"]']
+          for (const selector of selectors) {
+            const container = this.element.querySelector(selector)
+            if (container) return container
+          }
+          const firstField = this.element.querySelector(`.${this.wrapperClassValue}`)
+          return firstField ? firstField.parentElement : this.element
+        }
+
+        onSortStart(evt) {
+          const beforeEvent = this.dispatch("before-sort", {
+            cancelable: true,
+            detail: { item: evt.item, oldIndex: evt.oldIndex }
+          })
+
+          if (beforeEvent.defaultPrevented) {
+            this.sortableInstance.option("disabled", true)
+            setTimeout(() => this.sortableInstance.option("disabled", false), 0)
+          }
+        }
+
+        onSortEnd(evt) {
+          this.updatePositions()
+
+          this.dispatch("after-sort", {
+            detail: {
+              item: evt.item,
+              oldIndex: evt.oldIndex,
+              newIndex: evt.newIndex
+            }
+          })
+
+          this.updateButtonStates()
+        }
+
+        updatePositions() {
+          const items = this.element.querySelectorAll(
+            `.${this.wrapperClassValue}:not([style*="display: none"])`
+          )
+
+          items.forEach((item, index) => {
+            const positionInput = item.querySelector(
+              `input[name*="[${this.positionFieldValue}]"]`
+            )
+            if (positionInput) {
+              positionInput.value = index + 1
+            }
+          })
         }
       }
 

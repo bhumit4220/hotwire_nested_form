@@ -14,6 +14,7 @@ class ProjectsController < ApplicationController
     @max = params[:max]
     @min = params[:min]
     @limit_behavior = params[:limit_behavior] || 'disable'
+    @sortable = params[:sortable]
   end
 
   def edit; end
@@ -48,6 +49,6 @@ class ProjectsController < ApplicationController
   end
 
   def project_params
-    params.require(:project).permit(:name, tasks_attributes: %i[id name _destroy])
+    params.require(:project).permit(:name, tasks_attributes: %i[id name position _destroy])
   end
 end
