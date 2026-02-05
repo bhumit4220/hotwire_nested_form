@@ -107,6 +107,15 @@ RSpec/DescribeClass:
 RSpec/SpecFilePathFormat:
   Exclude:
     - 'spec/helpers/**/*'
+    - 'spec/lib/**/*'
+    - 'spec/integration/**/*'
+
+# Allow regular doubles when mocking classes that may not exist (e.g., SimpleForm)
+RSpec/VerifiedDoubles:
+  Exclude:
+    - 'spec/lib/**/*'
+    - 'spec/helpers/**/*'
+    - 'spec/integration/**/*'
 
 RSpec/LetSetup:
   Exclude:
