@@ -84,6 +84,46 @@ end
 
 That's it! Click "Add Task" to add fields, "Remove" to remove them.
 
+## SimpleForm Support
+
+Works automatically with SimpleForm! No configuration needed.
+
+```erb
+<%= simple_form_for @project do |f| %>
+  <%= f.input :name %>
+
+  <div data-controller="nested-form">
+    <%= f.simple_fields_for :tasks do |task_form| %>
+      <%= render "task_fields", f: task_form %>
+    <% end %>
+
+    <%= link_to_add_association "Add Task", f, :tasks %>
+  </div>
+
+  <%= f.button :submit %>
+<% end %>
+```
+
+## NPM Package (JavaScript-only)
+
+For non-Rails projects using Stimulus, install via npm:
+
+```bash
+npm install @hotwire-nested-form/stimulus
+```
+
+Register the controller:
+
+```javascript
+import { Application } from "@hotwired/stimulus"
+import NestedFormController from "@hotwire-nested-form/stimulus"
+
+const application = Application.start()
+application.register("nested-form", NestedFormController)
+```
+
+See [NPM package documentation](npm/README.md) for full details.
+
 ## API Reference
 
 ### link_to_add_association
