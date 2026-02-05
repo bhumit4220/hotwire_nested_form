@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-02-05
+
+### Added
+- SimpleForm auto-detection and compatibility
+- NPM package `@hotwire-nested-form/stimulus` for JavaScript-only users
+- `FormBuilderDetector` module for form builder type detection
+
+### Changed
+- Improved documentation for SimpleForm usage
+
 ## [1.0.0] - 2026-02-05
 
 ### Added
