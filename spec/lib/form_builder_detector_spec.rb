@@ -39,4 +39,51 @@ RSpec.describe HotwireNestedForm::FormBuilderDetector do
       expect(described_class.simple_form_available?).to be false
     end
   end
+
+  describe '.formtastic?' do
+    context 'when form builder is Formtastic::FormBuilder' do
+      it 'returns true' do
+        mock_builder = double('Formtastic::FormBuilder')
+        allow(mock_builder).to receive(:class).and_return(
+          double(name: 'Formtastic::FormBuilder')
+        )
+
+        expect(described_class.formtastic?(mock_builder)).to be true
+      end
+    end
+
+    context 'when form builder is Formtastic::SemanticFormBuilder' do
+      it 'returns true' do
+        mock_builder = double('Formtastic::SemanticFormBuilder')
+        allow(mock_builder).to receive(:class).and_return(
+          double(name: 'Formtastic::SemanticFormBuilder')
+        )
+
+        expect(described_class.formtastic?(mock_builder)).to be true
+      end
+    end
+
+    context 'when form builder is standard Rails FormBuilder' do
+      it 'returns false' do
+        mock_builder = double('ActionView::Helpers::FormBuilder')
+        allow(mock_builder).to receive(:class).and_return(
+          double(name: 'ActionView::Helpers::FormBuilder')
+        )
+
+        expect(described_class.formtastic?(mock_builder)).to be false
+      end
+    end
+  end
+
+  describe '.formtastic_available?' do
+    it 'returns true when Formtastic is defined' do
+      stub_const('Formtastic', Module.new)
+      expect(described_class.formtastic_available?).to be true
+    end
+
+    it 'returns false when Formtastic is not defined' do
+      hide_const('Formtastic') if defined?(Formtastic)
+      expect(described_class.formtastic_available?).to be false
+    end
+  end
 end
