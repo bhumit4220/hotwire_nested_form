@@ -1,0 +1,32 @@
+{
+  "name": "@hotwire-nested-form/stimulus",
+  "version": "1.1.0",
+  "description": "Stimulus controller for dynamic nested forms - works with Rails, React, Vue, or any Stimulus app",
+  "main": "src/index.js",
+  "module": "src/index.js",
+  "type": "module",
+  "files": [
+    "src"
+  ],
+  "keywords": [
+    "stimulus",
+    "hotwire",
+    "nested-forms",
+    "rails",
+    "dynamic-forms",
+    "cocoon-alternative"
+  ],
+  "author": "BhumitBhadani <bhumit2520@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bhumit4220/hotwire_nested_form.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bhumit4220/hotwire_nested_form/issues"
+  },
+  "homepage": "https://github.com/bhumit4220/hotwire_nested_form#readme",
+  "peerDependencies": {
+    "@hotwired/stimulus": "^3.0.0"
+  }
+}
