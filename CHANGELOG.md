@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-02-05
+
+### Added
+- Dynamic min/max limits via data attributes
+  - `data-nested-form-min-value` - minimum items required
+  - `data-nested-form-max-value` - maximum items allowed
+  - `data-nested-form-limit-behavior-value` - behavior at limits: "disable", "hide", or "error"
+- New events: `nested-form:limit-reached` and `nested-form:minimum-reached`
+- Formtastic form builder auto-detection and compatibility
+- `formtastic?` and `formtastic_available?` methods in FormBuilderDetector
+
+### Changed
+- Stimulus controller now updates button states automatically
+- Buttons disable/hide based on current count vs limits
+
 ## [1.1.0] - 2026-02-05
 
 ### Added
