@@ -80,9 +80,8 @@ module HotwireNestedForm
 
         # Render the fields
         form.fields_for(association, new_object, child_index: "NEW_RECORD") do |builder|
-          opts = render_options.dup
-          opts[:locals] = (opts[:locals] || {}).merge(f: builder)
-          render(partial_name, opts)
+          locals = (render_options[:locals] || {}).merge(f: builder)
+          render(partial: partial_name, locals: locals)
         end
       end
 

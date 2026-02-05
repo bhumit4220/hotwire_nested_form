@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 Rails.application.configure do
+  # Allow all hosts in test environment (needed for system specs with Capybara)
+  config.hosts.clear
+
   config.cache_classes = true
   config.eager_load = false
   config.public_file_server.enabled = true
