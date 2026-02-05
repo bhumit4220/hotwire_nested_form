@@ -47,6 +47,23 @@ application.register("nested-form", NestedFormController)
 | `data-count` | Number of fields to add per click | `1` |
 | `data-target` | CSS selector for insertion container | Parent element |
 
+### Min/Max Limits
+
+```html
+<div data-controller="nested-form"
+     data-nested-form-min-value="1"
+     data-nested-form-max-value="5"
+     data-nested-form-limit-behavior-value="disable">
+  <!-- fields here -->
+</div>
+```
+
+| Attribute | Description | Default |
+|-----------|-------------|---------|
+| `data-nested-form-min-value` | Minimum items required | `0` |
+| `data-nested-form-max-value` | Maximum items allowed | unlimited |
+| `data-nested-form-limit-behavior-value` | `"disable"`, `"hide"`, or `"error"` | `"disable"` |
+
 ### Events
 
 | Event | Cancelable | Detail |
@@ -55,6 +72,8 @@ application.register("nested-form", NestedFormController)
 | `nested-form:after-add` | No | `{ wrapper }` |
 | `nested-form:before-remove` | Yes | `{ wrapper }` |
 | `nested-form:after-remove` | No | `{ wrapper }` |
+| `nested-form:limit-reached` | No | `{ limit, current }` |
+| `nested-form:minimum-reached` | No | `{ minimum, current }` |
 
 ### Example: Listen for Events
 
