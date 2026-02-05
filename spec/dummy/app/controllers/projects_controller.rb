@@ -11,6 +11,9 @@ class ProjectsController < ApplicationController
 
   def new
     @project = Project.new
+    @max = params[:max]
+    @min = params[:min]
+    @limit_behavior = params[:limit_behavior] || 'disable'
   end
 
   def edit; end

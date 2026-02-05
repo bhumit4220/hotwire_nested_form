@@ -15,7 +15,10 @@
     <%= f.text_field :name %>
   </div>
 
-  <div data-controller="nested-form">
+  <div data-controller="nested-form"
+       <% if @max.present? %>data-nested-form-max-value="<%= @max %>"<% end %>
+       <% if @min.present? %>data-nested-form-min-value="<%= @min %>"<% end %>
+       data-nested-form-limit-behavior-value="<%= @limit_behavior || 'disable' %>">
     <h3>Tasks</h3>
 
     <div id="tasks">
