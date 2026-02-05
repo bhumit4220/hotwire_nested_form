@@ -104,6 +104,82 @@ Works automatically with SimpleForm! No configuration needed.
 <% end %>
 ```
 
+## Formtastic Support
+
+Works automatically with Formtastic! No configuration needed.
+
+```erb
+<%= semantic_form_for @project do |f| %>
+  <%= f.input :name %>
+
+  <div data-controller="nested-form">
+    <%= f.semantic_fields_for :tasks do |task_form| %>
+      <%= render "task_fields", f: task_form %>
+    <% end %>
+
+    <%= link_to_add_association "Add Task", f, :tasks %>
+  </div>
+
+  <%= f.actions %>
+<% end %>
+```
+
+## Min/Max Limits
+
+Control the number of nested items with data attributes:
+
+```erb
+<div data-controller="nested-form"
+     data-nested-form-min-value="1"
+     data-nested-form-max-value="5"
+     data-nested-form-limit-behavior-value="disable">
+
+  <%= f.fields_for :tasks do |tf| %>
+    <%= render "task_fields", f: tf %>
+  <% end %>
+
+  <%= link_to_add_association "Add Task", f, :tasks %>
+</div>
+```
+
+### Limit Options
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `data-nested-form-min-value` | Integer | `0` | Minimum items required |
+| `data-nested-form-max-value` | Integer | unlimited | Maximum items allowed |
+| `data-nested-form-limit-behavior-value` | String | `"disable"` | `"disable"`, `"hide"`, or `"error"` |
+
+### Limit Behaviors
+
+| Behavior | At Max Limit | At Min Limit |
+|----------|--------------|--------------|
+| `disable` | Add button disabled | Remove buttons disabled |
+| `hide` | Add button hidden | Remove buttons hidden |
+| `error` | Event fires, button enabled | Event fires, button enabled |
+
+### Dynamic Limits
+
+Change limits at runtime via JavaScript:
+
+```javascript
+const form = document.querySelector('[data-controller="nested-form"]')
+form.dataset.nestedFormMaxValue = 10  // Change max
+form.dataset.nestedFormMinValue = 2   // Change min
+```
+
+### Limit Events
+
+```javascript
+document.addEventListener("nested-form:limit-reached", (event) => {
+  alert(`Maximum ${event.detail.limit} items allowed`)
+})
+
+document.addEventListener("nested-form:minimum-reached", (event) => {
+  alert(`Must keep at least ${event.detail.minimum} items`)
+})
+```
+
 ## NPM Package (JavaScript-only)
 
 For non-Rails projects using Stimulus, install via npm:
@@ -198,6 +274,8 @@ link_to_remove_association(name, form, options = {}, &block)
 | `nested-form:after-add` | No | `{ wrapper }` | After fields added |
 | `nested-form:before-remove` | Yes | `{ wrapper }` | Before removing fields |
 | `nested-form:after-remove` | No | `{ wrapper }` | After fields removed |
+| `nested-form:limit-reached` | No | `{ limit, current }` | When max limit reached |
+| `nested-form:minimum-reached` | No | `{ minimum, current }` | When min limit reached |
 
 **Usage Examples:**
 
