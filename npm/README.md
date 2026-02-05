@@ -1,13 +1,13 @@
-# @hotwire-nested-form/stimulus
+# hotwire-nested-form-stimulus
 
 A Stimulus controller for dynamic nested forms. Add and remove nested form fields with ease.
 
 ## Installation
 
 ```bash
-npm install @hotwire-nested-form/stimulus
+npm install hotwire-nested-form-stimulus
 # or
-yarn add @hotwire-nested-form/stimulus
+yarn add hotwire-nested-form-stimulus
 ```
 
 ## Usage
@@ -16,7 +16,7 @@ yarn add @hotwire-nested-form/stimulus
 
 ```javascript
 import { Application } from "@hotwired/stimulus"
-import NestedFormController from "@hotwire-nested-form/stimulus"
+import NestedFormController from "hotwire-nested-form-stimulus"
 
 const application = Application.start()
 application.register("nested-form", NestedFormController)

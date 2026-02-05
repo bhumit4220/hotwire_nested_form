@@ -109,14 +109,14 @@ Works automatically with SimpleForm! No configuration needed.
 For non-Rails projects using Stimulus, install via npm:
 
 ```bash
-npm install @hotwire-nested-form/stimulus
+npm install hotwire-nested-form-stimulus
 ```
 
 Register the controller:
 
 ```javascript
 import { Application } from "@hotwired/stimulus"
-import NestedFormController from "@hotwire-nested-form/stimulus"
+import NestedFormController from "hotwire-nested-form-stimulus"
 
 const application = Application.start()
 application.register("nested-form", NestedFormController)
