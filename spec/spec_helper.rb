@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-ENV["RAILS_ENV"] = "test"
+ENV['RAILS_ENV'] = 'test'
 
-require File.expand_path("dummy/config/environment", __dir__)
+require File.expand_path('dummy/config/environment', __dir__)
 
-require "rspec/rails"
-require "capybara/rspec"
+require 'rspec/rails'
+require 'capybara/rspec'
 
 # Load support files
-Dir[File.expand_path("support/**/*.rb", __dir__)].each { |f| require f }
+Dir[File.expand_path('support/**/*.rb', __dir__)].each { |f| require f }
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
@@ -21,11 +21,11 @@ RSpec.configure do |config|
 
   config.shared_context_metadata_behavior = :apply_to_host_groups
   config.filter_run_when_matching :focus
-  config.example_status_persistence_file_path = "spec/examples.txt"
+  config.example_status_persistence_file_path = 'spec/examples.txt'
   config.disable_monkey_patching!
   config.warnings = true
 
-  config.default_formatter = "doc" if config.files_to_run.one?
+  config.default_formatter = 'doc' if config.files_to_run.one?
 
   config.order = :random
   Kernel.srand config.seed

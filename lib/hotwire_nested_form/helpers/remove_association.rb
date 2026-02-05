@@ -19,30 +19,30 @@ module HotwireNestedForm
       #     <span class="icon">×</span>
       #   <% end %>
       #
-      def link_to_remove_association(name = nil, form = nil, options = {}, &block)
+      def link_to_remove_association(name = nil, form = nil, options = {}, &)
         # Handle block syntax: link_to_remove_association(form) { "Remove" }
         if block_given?
           options = form || {}
           form = name
-          name = capture(&block)
+          name = capture(&)
         end
 
-        raise ArgumentError, "form is required" unless form
+        raise ArgumentError, 'form is required' unless form
 
         options = options.dup
 
         # Build data attributes
         data = options[:data] || {}
-        data[:action] = "nested-form#remove"
+        data[:action] = 'nested-form#remove'
 
         options[:data] = data
-        options[:href] = "#"
+        options[:href] = '#'
 
         # Build the hidden _destroy field for persisted records
         hidden_field = if form.object&.persisted?
                          form.hidden_field(:_destroy, value: false)
                        else
-                         "".html_safe
+                         ''.html_safe
                        end
 
         safe_join([hidden_field, content_tag(:a, name, options)])

@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require "spec_helper"
+require 'spec_helper'
 
-RSpec.describe "JavaScript events", type: :system do
-  describe "before-add event" do
-    it "dispatches nested-form:before-add event when adding" do
+RSpec.describe 'JavaScript events', type: :system do
+  describe 'before-add event' do
+    it 'dispatches nested-form:before-add event when adding' do
       visit new_project_path
 
       # Set up event listener that marks when event fires
@@ -15,13 +15,13 @@ RSpec.describe "JavaScript events", type: :system do
         });
       JS
 
-      click_link "Add Task"
+      click_link 'Add Task'
 
-      result = page.evaluate_script("window.beforeAddFired")
+      result = page.evaluate_script('window.beforeAddFired')
       expect(result).to be true
     end
 
-    it "provides wrapper element in event detail" do
+    it 'provides wrapper element in event detail' do
       visit new_project_path
 
       page.execute_script(<<~JS)
@@ -30,13 +30,13 @@ RSpec.describe "JavaScript events", type: :system do
         });
       JS
 
-      click_link "Add Task"
+      click_link 'Add Task'
 
-      result = page.evaluate_script("window.wrapperClass")
-      expect(result).to include("nested-fields")
+      result = page.evaluate_script('window.wrapperClass')
+      expect(result).to include('nested-fields')
     end
 
-    it "can cancel add with preventDefault" do
+    it 'can cancel add with preventDefault' do
       visit new_project_path
 
       page.execute_script(<<~JS)
@@ -45,15 +45,15 @@ RSpec.describe "JavaScript events", type: :system do
         });
       JS
 
-      click_link "Add Task"
+      click_link 'Add Task'
 
       # Should not add any fields because event was cancelled
-      expect(page).to have_no_css(".nested-fields")
+      expect(page).to have_no_css('.nested-fields')
     end
   end
 
-  describe "after-add event" do
-    it "dispatches nested-form:after-add event after adding" do
+  describe 'after-add event' do
+    it 'dispatches nested-form:after-add event after adding' do
       visit new_project_path
 
       page.execute_script(<<~JS)
@@ -62,13 +62,13 @@ RSpec.describe "JavaScript events", type: :system do
         });
       JS
 
-      click_link "Add Task"
+      click_link 'Add Task'
 
-      result = page.evaluate_script("window.afterAddFired")
+      result = page.evaluate_script('window.afterAddFired')
       expect(result).to be true
     end
 
-    it "fires after-add only after fields are actually added" do
+    it 'fires after-add only after fields are actually added' do
       visit new_project_path
 
       page.execute_script(<<~JS)
@@ -78,18 +78,18 @@ RSpec.describe "JavaScript events", type: :system do
         });
       JS
 
-      click_link "Add Task"
+      click_link 'Add Task'
 
-      result = page.evaluate_script("window.fieldCountAtEvent")
+      result = page.evaluate_script('window.fieldCountAtEvent')
       expect(result).to eq(1)
     end
   end
 
-  describe "before-remove event" do
-    it "dispatches nested-form:before-remove event when removing" do
+  describe 'before-remove event' do
+    it 'dispatches nested-form:before-remove event when removing' do
       visit new_project_path
 
-      click_link "Add Task"
+      click_link 'Add Task'
 
       page.execute_script(<<~JS)
         document.addEventListener("nested-form:before-remove", function(e) {
@@ -97,17 +97,17 @@ RSpec.describe "JavaScript events", type: :system do
         });
       JS
 
-      click_link "Remove"
+      click_link 'Remove'
 
-      result = page.evaluate_script("window.beforeRemoveFired")
+      result = page.evaluate_script('window.beforeRemoveFired')
       expect(result).to be true
     end
 
-    it "can cancel remove with preventDefault" do
+    it 'can cancel remove with preventDefault' do
       visit new_project_path
 
-      click_link "Add Task"
-      expect(page).to have_css(".nested-fields", count: 1)
+      click_link 'Add Task'
+      expect(page).to have_css('.nested-fields', count: 1)
 
       page.execute_script(<<~JS)
         document.addEventListener("nested-form:before-remove", function(e) {
@@ -115,18 +115,18 @@ RSpec.describe "JavaScript events", type: :system do
         });
       JS
 
-      click_link "Remove"
+      click_link 'Remove'
 
       # Fields should still be there because remove was cancelled
-      expect(page).to have_css(".nested-fields", count: 1)
+      expect(page).to have_css('.nested-fields', count: 1)
     end
   end
 
-  describe "after-remove event" do
-    it "dispatches nested-form:after-remove event after removing" do
+  describe 'after-remove event' do
+    it 'dispatches nested-form:after-remove event after removing' do
       visit new_project_path
 
-      click_link "Add Task"
+      click_link 'Add Task'
 
       page.execute_script(<<~JS)
         document.addEventListener("nested-form:after-remove", function(e) {
@@ -134,15 +134,15 @@ RSpec.describe "JavaScript events", type: :system do
         });
       JS
 
-      click_link "Remove"
+      click_link 'Remove'
 
-      result = page.evaluate_script("window.afterRemoveFired")
+      result = page.evaluate_script('window.afterRemoveFired')
       expect(result).to be true
     end
   end
 
-  describe "event order" do
-    it "fires before-add before after-add" do
+  describe 'event order' do
+    it 'fires before-add before after-add' do
       visit new_project_path
 
       page.execute_script(<<~JS)
@@ -155,16 +155,16 @@ RSpec.describe "JavaScript events", type: :system do
         });
       JS
 
-      click_link "Add Task"
+      click_link 'Add Task'
 
-      result = page.evaluate_script("window.eventOrder")
-      expect(result).to eq(["before-add", "after-add"])
+      result = page.evaluate_script('window.eventOrder')
+      expect(result).to eq(%w[before-add after-add])
     end
 
-    it "fires before-remove before after-remove" do
+    it 'fires before-remove before after-remove' do
       visit new_project_path
 
-      click_link "Add Task"
+      click_link 'Add Task'
 
       page.execute_script(<<~JS)
         window.eventOrder = [];
@@ -176,10 +176,10 @@ RSpec.describe "JavaScript events", type: :system do
         });
       JS
 
-      click_link "Remove"
+      click_link 'Remove'
 
-      result = page.evaluate_script("window.eventOrder")
-      expect(result).to eq(["before-remove", "after-remove"])
+      result = page.evaluate_script('window.eventOrder')
+      expect(result).to eq(%w[before-remove after-remove])
     end
   end
 end

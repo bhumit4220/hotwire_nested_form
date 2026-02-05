@@ -20,17 +20,17 @@ module HotwireNestedForm
       #     <span>+ Add Task</span>
       #   <% end %>
       #
-      def link_to_add_association(name = nil, form = nil, association = nil, options = {}, &block)
+      def link_to_add_association(name = nil, form = nil, association = nil, options = {}, &)
         # Handle block syntax: link_to_add_association(form, :tasks) { "Add" }
         if block_given?
           options = association || {}
           association = form
           form = name
-          name = capture(&block)
+          name = capture(&)
         end
 
-        raise ArgumentError, "form is required" unless form
-        raise ArgumentError, "association is required" unless association
+        raise ArgumentError, 'form is required' unless form
+        raise ArgumentError, 'association is required' unless association
 
         options = options.dup
 
@@ -53,14 +53,14 @@ module HotwireNestedForm
 
         # Build data attributes
         data = options[:data] || {}
-        data[:action] = "nested-form#add"
+        data[:action] = 'nested-form#add'
         data[:template] = template
         data[:insertion] = insertion
         data[:count] = count if count > 1
         data[:target] = target if target
 
         options[:data] = data
-        options[:href] = "#"
+        options[:href] = '#'
 
         content_tag(:a, name, options)
       end
@@ -79,7 +79,7 @@ module HotwireNestedForm
         partial_name = partial || "#{association.to_s.singularize}_fields"
 
         # Render the fields
-        form.fields_for(association, new_object, child_index: "NEW_RECORD") do |builder|
+        form.fields_for(association, new_object, child_index: 'NEW_RECORD') do |builder|
           locals = (render_options[:locals] || {}).merge(f: builder)
           render(partial: partial_name, locals: locals)
         end

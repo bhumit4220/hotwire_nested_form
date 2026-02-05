@@ -1,0 +1,113 @@
+# frozen_string_literal: true
+
+plugins:
+  - rubocop-rails
+  - rubocop-rspec
+
+AllCops:
+  TargetRubyVersion: 3.1
+  NewCops: enable
+  SuggestExtensions: false
+  Exclude:
+    - 'spec/dummy/db/**/*'
+    - 'spec/dummy/bin/**/*'
+    - 'spec/dummy/tmp/**/*'
+    - 'vendor/**/*'
+
+# Gem-specific configuration
+Gemspec/DevelopmentDependencies:
+  Enabled: false
+
+# Style
+Style/Documentation:
+  Enabled: false
+
+# Layout
+Layout/LineLength:
+  Max: 120
+  Exclude:
+    - 'spec/**/*'
+
+# Metrics - relaxed for helper methods which are necessarily complex
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+    - '*.gemspec'
+
+Metrics/MethodLength:
+  Max: 45
+  Exclude:
+    - 'lib/generators/**/*'
+
+Metrics/AbcSize:
+  Max: 50
+
+Metrics/CyclomaticComplexity:
+  Max: 12
+
+Metrics/PerceivedComplexity:
+  Max: 12
+
+Metrics/ParameterLists:
+  Max: 5
+  MaxOptionalParameters: 5
+  CountKeywordArgs: false
+
+# Lint
+Lint/DuplicateBranch:
+  Exclude:
+    - 'lib/hotwire_nested_form/helpers/add_association.rb'
+
+# Naming
+Naming/FileName:
+  Exclude:
+    - 'Gemfile'
+    - 'Rakefile'
+
+# Rails
+Rails/FilePath:
+  Enabled: false
+
+Rails/ApplicationRecord:
+  Exclude:
+    - 'spec/dummy/app/models/application_record.rb'
+
+Rails/ApplicationController:
+  Exclude:
+    - 'spec/dummy/app/controllers/application_controller.rb'
+
+Rails/I18nLocaleTexts:
+  Exclude:
+    - 'spec/dummy/**/*'
+
+# ActionControllerFlashBeforeRender wants params.expect but it doesn't work well with nested attributes
+Rails/ActionControllerFlashBeforeRender:
+  Exclude:
+    - 'spec/dummy/**/*'
+
+# params.expect doesn't work correctly with nested attributes in forms
+Rails/StrongParametersExpect:
+  Exclude:
+    - 'spec/dummy/**/*'
+
+# RSpec
+RSpec/MultipleExpectations:
+  Max: 5
+
+RSpec/ExampleLength:
+  Max: 20
+
+RSpec/NestedGroups:
+  Max: 4
+
+RSpec/DescribeClass:
+  Exclude:
+    - 'spec/system/**/*'
+
+RSpec/SpecFilePathFormat:
+  Exclude:
+    - 'spec/helpers/**/*'
+
+RSpec/LetSetup:
+  Exclude:
+    - 'spec/system/**/*'
