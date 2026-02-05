@@ -105,6 +105,8 @@ GEM
     drb (2.2.3)
     erb (6.0.1)
     erubi (1.13.1)
+    formtastic (5.0.0)
+      actionpack (>= 6.0.0)
     globalid (1.3.0)
       activesupport (>= 6.1)
     i18n (1.14.8)
@@ -314,6 +316,7 @@ PLATFORMS
 DEPENDENCIES
   capybara (~> 3.39)
   debug
+  formtastic (~> 5.0)
   hotwire_nested_form!
   puma (~> 6.0)
   rails (~> 8.0.0)
