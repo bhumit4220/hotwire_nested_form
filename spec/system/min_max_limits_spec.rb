@@ -40,7 +40,7 @@ RSpec.describe 'Min/Max Limits', type: :system do
       click_link 'Add Task'
 
       # Try to add another - should fire event
-      page.execute_script("window.limitReached = false")
+      page.execute_script('window.limitReached = false')
       page.execute_script("document.addEventListener('nested-form:limit-reached', () => { window.limitReached = true })")
 
       find('[data-action*="nested-form#add"]').click
@@ -88,7 +88,7 @@ RSpec.describe 'Min/Max Limits', type: :system do
 
       click_link 'Add Task'
 
-      page.execute_script("window.minReached = false")
+      page.execute_script('window.minReached = false')
       page.execute_script("document.addEventListener('nested-form:minimum-reached', () => { window.minReached = true })")
 
       find('[data-action*="nested-form#remove"]').click

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    hotwire_nested_form (1.1.0)
+    hotwire_nested_form (1.2.0)
       rails (>= 7.0)
 
 GEM

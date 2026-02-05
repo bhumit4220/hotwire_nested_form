@@ -11,11 +11,11 @@ gem 'rails', "~> #{rails_version}.0"
 
 group :development, :test do
   gem 'capybara', '~> 3.39'
+  gem 'formtastic', '~> 5.0'
   gem 'puma', '~> 6.0'
   gem 'rspec-rails', '~> 6.0'
   gem 'selenium-webdriver', '~> 4.10'
   gem 'simple_form', '~> 5.3'
-  gem 'formtastic', '~> 5.0'
   gem 'sqlite3', '>= 1.6'
 
   # Code quality
