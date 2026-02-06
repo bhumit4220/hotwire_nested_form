@@ -180,6 +180,98 @@ document.addEventListener("nested-form:minimum-reached", (event) => {
 })
 ```
 
+## Drag & Drop Sorting
+
+Enable drag & drop reordering with position persistence:
+
+### 1. Install SortableJS
+
+```bash
+# Rails with importmap
+bin/importmap pin sortablejs
+
+# OR npm/yarn
+npm install sortablejs
+```
+
+### 2. Add Position to Your Model
+
+```bash
+rails generate migration AddPositionToTasks position:integer
+rails db:migrate
+```
+
+```ruby
+# app/models/task.rb
+class Task < ApplicationRecord
+  belongs_to :project
+  default_scope { order(:position) }
+end
+```
+
+### 3. Update Your Partial
+
+```erb
+<%# app/views/projects/_task_fields.html.erb %>
+<div class="nested-fields">
+  <%= f.hidden_field :position %>
+  <span class="drag-handle">☰</span>
+  <%= f.text_field :name %>
+  <%= link_to_remove_association "Remove", f %>
+</div>
+```
+
+### 4. Enable Sorting
+
+```erb
+<div data-controller="nested-form"
+     data-nested-form-sortable-value="true"
+     data-nested-form-sort-handle-value=".drag-handle">
+  <!-- nested fields -->
+</div>
+```
+
+### 5. Permit Position in Controller
+
+```ruby
+params.require(:project).permit(:name,
+  tasks_attributes: [:id, :name, :position, :_destroy])
+```
+
+### Sorting Options
+
+| Attribute | Default | Description |
+|-----------|---------|-------------|
+| `data-nested-form-sortable-value` | `false` | Enable drag & drop |
+| `data-nested-form-position-field-value` | `"position"` | Position field name |
+| `data-nested-form-sort-handle-value` | (none) | Drag handle selector |
+
+### Sorting Events
+
+| Event | Detail | Description |
+|-------|--------|-------------|
+| `nested-form:before-sort` | `{ item, oldIndex }` | Before drag (cancelable) |
+| `nested-form:after-sort` | `{ item, oldIndex, newIndex }` | After drop |
+
+### Example CSS
+
+```css
+.drag-handle {
+  cursor: grab;
+  user-select: none;
+}
+
+.nested-form-dragging {
+  opacity: 0.8;
+  background: #e3f2fd;
+}
+
+.nested-form-drag-ghost {
+  opacity: 0.4;
+  border: 2px dashed #2196F3;
+}
+```
+
 ## NPM Package (JavaScript-only)
 
 For non-Rails projects using Stimulus, install via npm:
@@ -276,6 +368,8 @@ link_to_remove_association(name, form, options = {}, &block)
 | `nested-form:after-remove` | No | `{ wrapper }` | After fields removed |
 | `nested-form:limit-reached` | No | `{ limit, current }` | When max limit reached |
 | `nested-form:minimum-reached` | No | `{ minimum, current }` | When min limit reached |
+| `nested-form:before-sort` | Yes | `{ item, oldIndex }` | Before drag starts |
+| `nested-form:after-sort` | No | `{ item, oldIndex, newIndex }` | After drop completes |
 
 **Usage Examples:**
 
