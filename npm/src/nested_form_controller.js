@@ -8,7 +8,9 @@ export default class extends Controller {
     limitBehavior: { type: String, default: "disable" },
     sortable: { type: Boolean, default: false },
     positionField: { type: String, default: "position" },
-    sortHandle: { type: String, default: "" }
+    sortHandle: { type: String, default: "" },
+    animation: { type: String, default: "" },
+    animationDuration: { type: Number, default: 300 }
   }
 
   connect() {
@@ -42,7 +44,7 @@ export default class extends Controller {
       return
     }
 
-    const template = event.currentTarget.dataset.template
+    const template = this.getTemplate(event.currentTarget)
     const insertion = event.currentTarget.dataset.insertion || "before"
     const targetSelector = event.currentTarget.dataset.target
     const count = parseInt(event.currentTarget.dataset.count) || 1
@@ -76,6 +78,14 @@ export default class extends Controller {
 
     if (beforeEvent.defaultPrevented) return
 
+    if (this.animationValue) {
+      this.animateOut(wrapper, () => this.removeElement(wrapper))
+    } else {
+      this.removeElement(wrapper)
+    }
+  }
+
+  removeElement(wrapper) {
     const destroyInput = wrapper.querySelector("input[name*='_destroy']")
 
     if (destroyInput) {
@@ -89,9 +99,23 @@ export default class extends Controller {
     this.updateButtonStates()
   }
 
+  getTemplate(trigger) {
+    // Prefer <template> tag (handles deep nesting), fall back to data-template
+    const placeholder = trigger.dataset.placeholder
+    if (placeholder) {
+      const templateEl = this.element.querySelector(
+        `template[data-nested-form-template="${placeholder}"]`
+      )
+      if (templateEl) return templateEl.innerHTML
+    }
+    return trigger.dataset.template
+  }
+
   insertFields(template, insertion, targetSelector, trigger) {
     const newId = new Date().getTime()
-    const content = template.replace(/NEW_RECORD/g, newId)
+    const placeholder = trigger.dataset.placeholder || "NEW_RECORD"
+    const regex = new RegExp(placeholder, "g")
+    const content = template.replace(regex, newId)
 
     const fragment = document.createRange().createContextualFragment(content)
     const wrapper = fragment.firstElementChild
@@ -122,6 +146,37 @@ export default class extends Controller {
     }
 
     this.dispatch("after-add", { detail: { wrapper } })
+
+    if (this.animationValue) {
+      this.animateIn(wrapper)
+    }
+  }
+
+  // Animations
+
+  animateIn(element) {
+    element.classList.add("nested-form-enter")
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        element.classList.add("nested-form-enter-active")
+        setTimeout(() => {
+          element.classList.remove("nested-form-enter", "nested-form-enter-active")
+        }, this.animationDurationValue)
+      })
+    })
+  }
+
+  animateOut(element, callback) {
+    element.classList.add("nested-form-exit-active")
+
+    const done = () => {
+      element.classList.remove("nested-form-exit-active")
+      callback()
+    }
+
+    element.addEventListener("transitionend", done, { once: true })
+    // Fallback if transitionend doesn't fire
+    setTimeout(done, this.animationDurationValue + 50)
   }
 
   updateButtonStates() {

@@ -7,9 +7,19 @@ module HotwireNestedForm
 
       desc 'Install hotwire_nested_form'
 
+      class_option :animations, type: :boolean, default: false,
+                                desc: 'Copy animation stylesheet'
+
       def copy_stimulus_controller
         copy_file 'nested_form_controller.js',
                   'app/javascript/controllers/nested_form_controller.js'
+      end
+
+      def copy_animation_stylesheet
+        return unless options[:animations]
+
+        copy_file 'animations.css',
+                  'app/assets/stylesheets/hotwire_nested_form/animations.css'
       end
 
       def show_post_install_message

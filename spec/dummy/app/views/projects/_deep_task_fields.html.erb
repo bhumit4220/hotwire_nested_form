@@ -1,0 +1,19 @@
+<div class="nested-fields" style="display: flex; flex-direction: column; gap: 8px; padding: 8px; margin-bottom: 8px; background: #f5f5f5; border-radius: 4px;">
+  <div style="display: flex; align-items: center; gap: 10px;">
+    <%= f.hidden_field :position %>
+    <%= f.label :name, "Task Name" %>
+    <%= f.text_field :name %>
+    <%= link_to_remove_association "Remove Task", f, class: "remove-task-link" %>
+  </div>
+
+  <div data-controller="nested-form">
+    <h4>Subtasks</h4>
+    <div id="subtasks">
+      <%= f.fields_for :subtasks do |sf| %>
+        <%= render "subtask_fields", f: sf %>
+      <% end %>
+    </div>
+    <%= link_to_add_association "Add Subtask", f, :subtasks,
+          insertion: :append, target: "#subtasks", class: "add-subtask-link" %>
+  </div>
+</div>

@@ -30,22 +30,32 @@ application.register("nested-form", NestedFormController)
     <!-- Existing nested fields go here -->
   </div>
 
+  <template data-nested-form-template="NEW_ITEM_RECORD">
+    <div class="nested-fields">
+      <input name="items[NEW_ITEM_RECORD][name]">
+      <a href="#" data-action="nested-form#remove">Remove</a>
+    </div>
+  </template>
   <a href="#"
      data-action="nested-form#add"
-     data-template="<div class='nested-fields'><input name='items[][name]'><a href='#' data-action='nested-form#remove'>Remove</a></div>">
+     data-placeholder="NEW_ITEM_RECORD"
+     data-insertion="append"
+     data-target="#items">
     Add Item
   </a>
 </div>
 ```
 
-### Data Attributes
+### Data Attributes (on add button)
 
 | Attribute | Description | Default |
 |-----------|-------------|---------|
-| `data-template` | HTML template for new fields (use `NEW_RECORD` as placeholder) | Required |
+| `data-placeholder` | Placeholder string in template to replace with unique ID | `"NEW_RECORD"` |
 | `data-insertion` | Where to insert: `before`, `after`, `append`, `prepend` | `before` |
 | `data-count` | Number of fields to add per click | `1` |
 | `data-target` | CSS selector for insertion container | Parent element |
+
+**Note:** For backward compatibility, `data-template` (inline HTML) is still supported, but `<template>` tags are recommended for deep nesting support.
 
 ### Min/Max Limits
 
@@ -97,6 +107,64 @@ window.Sortable = Sortable
 | `data-nested-form-sortable-value` | `false` | Enable sorting |
 | `data-nested-form-position-field-value` | `"position"` | Position field name |
 | `data-nested-form-sort-handle-value` | (none) | Drag handle selector |
+
+### Animations
+
+Add smooth CSS transitions when items are added or removed:
+
+```javascript
+import "hotwire-nested-form-stimulus/css/animations.css"
+```
+
+```html
+<div data-controller="nested-form"
+     data-nested-form-animation-value="fade"
+     data-nested-form-animation-duration-value="300">
+  <!-- fields here -->
+</div>
+```
+
+| Attribute | Default | Description |
+|-----------|---------|-------------|
+| `data-nested-form-animation-value` | `""` | `"fade"`, `"slide"`, or `""` (none) |
+| `data-nested-form-animation-duration-value` | `300` | Duration in milliseconds |
+
+### Deep Nesting
+
+For multi-level nesting, use `<template>` tags and `data-placeholder` attributes. Each nesting level needs its own `data-controller="nested-form"` and a unique placeholder:
+
+```html
+<div data-controller="nested-form">
+  <div id="tasks">
+    <!-- task items here -->
+  </div>
+
+  <template data-nested-form-template="NEW_TASK_RECORD">
+    <div class="nested-fields">
+      <input name="items[tasks][NEW_TASK_RECORD][name]">
+
+      <!-- Nested level 2 -->
+      <div data-controller="nested-form">
+        <div id="subtasks"></div>
+        <template data-nested-form-template="NEW_SUBTASK_RECORD">
+          <div class="nested-fields">
+            <input name="items[tasks][NEW_TASK_RECORD][subtasks][NEW_SUBTASK_RECORD][name]">
+            <a href="#" data-action="nested-form#remove">Remove</a>
+          </div>
+        </template>
+        <a href="#" data-action="nested-form#add"
+           data-placeholder="NEW_SUBTASK_RECORD"
+           data-insertion="append" data-target="#subtasks">Add Subtask</a>
+      </div>
+    </div>
+  </template>
+  <a href="#" data-action="nested-form#add"
+     data-placeholder="NEW_TASK_RECORD"
+     data-insertion="append" data-target="#tasks">Add Task</a>
+</div>
+```
+
+The controller replaces only the matching placeholder per button, so nested templates stay intact.
 
 ### Events
 

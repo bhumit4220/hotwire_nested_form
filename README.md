@@ -272,6 +272,123 @@ params.require(:project).permit(:name,
 }
 ```
 
+## Animations
+
+Add smooth CSS transitions when items are added or removed:
+
+```erb
+<div data-controller="nested-form"
+     data-nested-form-animation-value="fade"
+     data-nested-form-animation-duration-value="300">
+  <!-- nested fields -->
+</div>
+```
+
+### Include the Animation Stylesheet
+
+**Rails (generator):**
+```bash
+rails g hotwire_nested_form:install --animations
+```
+
+**Rails (manual):** Add to your stylesheet:
+```css
+@import "hotwire_nested_form/animations";
+```
+
+**NPM:**
+```javascript
+import "hotwire-nested-form-stimulus/css/animations.css"
+```
+
+### Animation Options
+
+| Attribute | Default | Description |
+|-----------|---------|-------------|
+| `data-nested-form-animation-value` | `""` | `"fade"`, `"slide"`, or `""` (none) |
+| `data-nested-form-animation-duration-value` | `300` | Duration in milliseconds |
+
+### CSS Classes
+
+| Class | When Applied |
+|-------|-------------|
+| `nested-form-enter` | Immediately on add |
+| `nested-form-enter-active` | Next frame after add (triggers transition) |
+| `nested-form-exit-active` | On remove (triggers transition, then element is hidden/removed) |
+
+You can customize the animations by overriding these classes in your stylesheet.
+
+## Deep Nesting (Multi-Level)
+
+Nest forms inside forms (e.g. Project -> Tasks -> Subtasks):
+
+### 1. Model Setup
+
+```ruby
+class Project < ApplicationRecord
+  has_many :tasks, dependent: :destroy
+  accepts_nested_attributes_for :tasks, allow_destroy: true
+end
+
+class Task < ApplicationRecord
+  belongs_to :project
+  has_many :subtasks, dependent: :destroy
+  accepts_nested_attributes_for :subtasks, allow_destroy: true
+end
+```
+
+### 2. Form Setup
+
+```erb
+<%# _form.html.erb %>
+<%= form_with model: @project do |f| %>
+  <div data-controller="nested-form">
+    <div id="tasks">
+      <%= f.fields_for :tasks do |tf| %>
+        <%= render "task_fields", f: tf %>
+      <% end %>
+    </div>
+    <%= link_to_add_association "Add Task", f, :tasks,
+          insertion: :append, target: "#tasks" %>
+  </div>
+  <%= f.submit %>
+<% end %>
+
+<%# _task_fields.html.erb %>
+<div class="nested-fields">
+  <%= f.text_field :name %>
+  <%= link_to_remove_association "Remove Task", f %>
+
+  <div data-controller="nested-form">
+    <div id="subtasks">
+      <%= f.fields_for :subtasks do |sf| %>
+        <%= render "subtask_fields", f: sf %>
+      <% end %>
+    </div>
+    <%= link_to_add_association "Add Subtask", f, :subtasks,
+          insertion: :append, target: "#subtasks" %>
+  </div>
+</div>
+
+<%# _subtask_fields.html.erb %>
+<div class="nested-fields">
+  <%= f.text_field :name %>
+  <%= link_to_remove_association "Remove", f %>
+</div>
+```
+
+### 3. Controller Params
+
+```ruby
+def project_params
+  params.require(:project).permit(:name,
+    tasks_attributes: [:id, :name, :_destroy,
+      subtasks_attributes: [:id, :name, :_destroy]])
+end
+```
+
+Each nesting level automatically gets a unique placeholder (`NEW_TASK_RECORD`, `NEW_SUBTASK_RECORD`) so adding items at one level doesn't affect templates at other levels. Each `data-controller="nested-form"` operates independently.
+
 ## NPM Package (JavaScript-only)
 
 For non-Rails projects using Stimulus, install via npm:
