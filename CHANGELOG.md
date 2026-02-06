@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-02-06
+
+### Added
+- Drag & drop sorting for nested items (requires SortableJS)
+  - `data-nested-form-sortable-value` - enable sorting
+  - `data-nested-form-position-field-value` - custom position field name
+  - `data-nested-form-sort-handle-value` - CSS selector for drag handle
+- New events: `nested-form:before-sort` and `nested-form:after-sort`
+- CSS classes for drag styling: `nested-form-dragging`, `nested-form-drag-ghost`
+
+### Changed
+- Controller now cleans up Sortable instance on disconnect
+
 ## [1.2.0] - 2026-02-05
 
 ### Added
