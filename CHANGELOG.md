@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-02-06
+
+### Added
+- Add/remove animations with CSS transitions
+  - `data-nested-form-animation-value` - animation type: `"fade"`, `"slide"`, or `""` (none)
+  - `data-nested-form-animation-duration-value` - duration in ms (default: 300)
+  - CSS classes: `nested-form-enter`, `nested-form-enter-active`, `nested-form-exit-active`
+  - Optional animation stylesheet: `hotwire_nested_form/animations.css`
+  - Install with: `rails g hotwire_nested_form:install --animations`
+  - NPM users: `import "hotwire-nested-form-stimulus/css/animations.css"`
+- Deep nesting (multi-level nested forms)
+  - Association-specific placeholders (`NEW_TASK_RECORD`, `NEW_SUBTASK_RECORD`) prevent collisions
+  - Each `link_to_add_association` automatically generates unique placeholders per association
+  - `<template>` tags for template storage (replaces `data-template` attribute for reliable deep nesting)
+  - Full backward compatibility - single-level forms work unchanged
+
+### Changed
+- Template HTML now stored in `<template>` tags instead of `data-template` attributes
+- `link_to_add_association` outputs `<template>` + `<a>` tag pair
+- Controller `remove()` refactored into `remove()` + `removeElement()` for animation support
+- Added `getTemplate()` method for flexible template lookup
+
 ## [1.3.0] - 2026-02-06
 
 ### Added

@@ -15,9 +15,16 @@ class ProjectsController < ApplicationController
     @min = params[:min]
     @limit_behavior = params[:limit_behavior] || 'disable'
     @sortable = params[:sortable]
+    @animation = params[:animation]
   end
 
-  def edit; end
+  def deep_new
+    @project = Project.new
+  end
+
+  def edit
+    @animation = params[:animation]
+  end
 
   def create
     @project = Project.new(project_params)
@@ -49,6 +56,8 @@ class ProjectsController < ApplicationController
   end
 
   def project_params
-    params.require(:project).permit(:name, tasks_attributes: %i[id name position _destroy])
+    params.require(:project).permit(:name,
+                                    tasks_attributes: [:id, :name, :position, :_destroy,
+                                                       { subtasks_attributes: %i[id name _destroy] }])
   end
 end

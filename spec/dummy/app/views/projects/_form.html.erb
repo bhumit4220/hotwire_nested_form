@@ -20,7 +20,8 @@
        <% if @min.present? %>data-nested-form-min-value="<%= @min %>"<% end %>
        data-nested-form-limit-behavior-value="<%= @limit_behavior || 'disable' %>"
        <% if @sortable %>data-nested-form-sortable-value="true"<% end %>
-       data-nested-form-sort-handle-value=".drag-handle">
+       data-nested-form-sort-handle-value=".drag-handle"
+       <% if @animation.present? %>data-nested-form-animation-value="<%= @animation %>"<% end %>>
     <h3>Tasks</h3>
 
     <div id="tasks">

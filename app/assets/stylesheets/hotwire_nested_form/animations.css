@@ -1,0 +1,47 @@
+/*
+ * hotwire_nested_form - Animation Styles
+ *
+ * Include this stylesheet for smooth add/remove transitions.
+ * Enable with: data-nested-form-animation-value="fade" or "slide"
+ *
+ * Rails: Include in your application stylesheet or copy to app/assets/stylesheets/
+ * NPM: import "hotwire-nested-form/css/animations.css"
+ */
+
+/* Fade animation (default) */
+.nested-form-enter {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.nested-form-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms ease, transform 300ms ease;
+}
+
+.nested-form-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 300ms ease, transform 300ms ease;
+}
+
+/* Slide animation */
+.nested-form-enter[data-animation="slide"] {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.nested-form-enter-active[data-animation="slide"] {
+  max-height: 500px;
+  opacity: 1;
+  transition: max-height 300ms ease, opacity 300ms ease;
+}
+
+.nested-form-exit-active[data-animation="slide"] {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 300ms ease, opacity 300ms ease;
+}
