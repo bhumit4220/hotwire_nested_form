@@ -166,6 +166,35 @@ For multi-level nesting, use `<template>` tags and `data-placeholder` attributes
 
 The controller replaces only the matching placeholder per button, so nested templates stay intact.
 
+### Accessibility
+
+Accessibility is **enabled by default**. The controller automatically:
+
+- Sets `role="group"` and `aria-label` on the container
+- Creates a live region for screen reader announcements
+- Manages focus on add/remove/duplicate actions
+
+Disable with:
+
+```html
+<div data-controller="nested-form"
+     data-nested-form-a11y-value="false">
+```
+
+### Duplicate/Clone
+
+Add a duplicate button to clone an existing item with its field values:
+
+```html
+<div class="nested-fields">
+  <input name="items[][name]" value="Task A">
+  <a href="#" data-action="nested-form#duplicate">Duplicate</a>
+  <a href="#" data-action="nested-form#remove">Remove</a>
+</div>
+```
+
+The clone gets a new unique index and any persisted record ID is removed so it saves as a new record.
+
 ### Events
 
 | Event | Cancelable | Detail |
@@ -178,6 +207,8 @@ The controller replaces only the matching placeholder per button, so nested temp
 | `nested-form:minimum-reached` | No | `{ minimum, current }` |
 | `nested-form:before-sort` | Yes | `{ item, oldIndex }` |
 | `nested-form:after-sort` | No | `{ item, oldIndex, newIndex }` |
+| `nested-form:before-duplicate` | Yes | `{ source }` |
+| `nested-form:after-duplicate` | No | `{ source, clone }` |
 
 ### Example: Listen for Events
 

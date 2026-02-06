@@ -389,6 +389,83 @@ end
 
 Each nesting level automatically gets a unique placeholder (`NEW_TASK_RECORD`, `NEW_SUBTASK_RECORD`) so adding items at one level doesn't affect templates at other levels. Each `data-controller="nested-form"` operates independently.
 
+## Accessibility
+
+Accessibility features are **enabled by default**. The controller automatically:
+
+- Sets `role="group"` and `aria-label` on the controller element
+- Creates an `aria-live="polite"` region for screen reader announcements
+- Focuses the first input when a new item is added
+- Moves focus to the "Add" button when an item is removed
+- Announces add/remove/duplicate actions to screen readers
+
+### Disabling Accessibility
+
+```erb
+<div data-controller="nested-form"
+     data-nested-form-a11y-value="false">
+  <!-- fields -->
+</div>
+```
+
+### Custom ARIA Label
+
+Set your own `aria-label` and the controller will preserve it:
+
+```erb
+<div data-controller="nested-form"
+     aria-label="Project tasks">
+  <!-- fields -->
+</div>
+```
+
+## Duplicate/Clone
+
+Duplicate an existing nested item (with its field values) as a starting point for a new item:
+
+### 1. Add Duplicate Button to Partial
+
+```erb
+<%# _task_fields.html.erb %>
+<div class="nested-fields">
+  <%= f.text_field :name %>
+  <%= link_to_duplicate_association "Duplicate", f, class: "btn-sm" %>
+  <%= link_to_remove_association "Remove", f %>
+</div>
+```
+
+### 2. That's It!
+
+Clicking "Duplicate" will:
+- Clone the item with all current field values
+- Generate a new unique index (so Rails creates a new record)
+- Remove the persisted record ID (so it saves as a new record)
+- Respect the max limit
+- Animate the new item if animations are enabled
+- Focus the first input of the clone
+- Announce "Item duplicated." to screen readers
+
+### Duplicate Events
+
+| Event | Cancelable | Detail |
+|-------|------------|--------|
+| `nested-form:before-duplicate` | Yes | `{ source }` |
+| `nested-form:after-duplicate` | No | `{ source, clone }` |
+
+```javascript
+// Customize the clone before it's inserted
+document.addEventListener("nested-form:after-duplicate", (event) => {
+  const clone = event.detail.clone
+  // Clear specific fields in the clone
+  clone.querySelector("input[name*='description']").value = ""
+})
+
+// Prevent duplication conditionally
+document.addEventListener("nested-form:before-duplicate", (event) => {
+  if (someCondition) event.preventDefault()
+})
+```
+
 ## NPM Package (JavaScript-only)
 
 For non-Rails projects using Stimulus, install via npm:
@@ -475,6 +552,31 @@ link_to_remove_association(name, form, options = {}, &block)
 <% end %>
 ```
 
+### link_to_duplicate_association
+
+```ruby
+link_to_duplicate_association(name, form, options = {}, &block)
+```
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| (standard HTML options) | | | Passed to the `<a>` tag |
+
+**Examples:**
+
+```erb
+<%# Basic usage %>
+<%= link_to_duplicate_association "Duplicate", f %>
+
+<%# With HTML classes %>
+<%= link_to_duplicate_association "Duplicate", f, class: "btn btn-sm" %>
+
+<%# With block %>
+<%= link_to_duplicate_association f do %>
+  <span class="icon">📋</span> Copy
+<% end %>
+```
+
 ## JavaScript Events
 
 | Event | Cancelable | Detail | When |
@@ -487,6 +589,8 @@ link_to_remove_association(name, form, options = {}, &block)
 | `nested-form:minimum-reached` | No | `{ minimum, current }` | When min limit reached |
 | `nested-form:before-sort` | Yes | `{ item, oldIndex }` | Before drag starts |
 | `nested-form:after-sort` | No | `{ item, oldIndex, newIndex }` | After drop completes |
+| `nested-form:before-duplicate` | Yes | `{ source }` | Before duplicating item |
+| `nested-form:after-duplicate` | No | `{ source, clone }` | After item duplicated |
 
 **Usage Examples:**
 
