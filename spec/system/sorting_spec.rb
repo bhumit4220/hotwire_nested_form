@@ -3,6 +3,19 @@
 require 'spec_helper'
 
 RSpec.describe 'Drag & Drop Sorting', type: :system do
+  def update_positions_js
+    <<~JS
+      (function() {
+        const el = document.querySelector('[data-controller="nested-form"]');
+        const controllers = window.Stimulus.controllers;
+        for (const c of controllers) {
+          if (c.element === el && c.updatePositions) { c.updatePositions(); return true; }
+        }
+        return false;
+      })()
+    JS
+  end
+
   describe 'sortable disabled (default)' do
     it 'does not initialize sortable when not enabled' do
       visit new_project_path
@@ -32,33 +45,13 @@ RSpec.describe 'Drag & Drop Sorting', type: :system do
 
       click_link 'Add Task'
       click_link 'Add Task'
-
-      # Wait for items to appear
       expect(page).to have_css('.nested-fields', count: 2)
+      expect(all('input[name*="[position]"]', visible: false).count).to eq(2)
 
-      # Get initial positions - they start at 0 (default)
-      position_inputs = all('input[name*="[position]"]', visible: false)
-      expect(position_inputs.count).to eq(2)
+      # Call updatePositions on the controller to simulate post-drag update
+      page.evaluate_script(update_positions_js)
 
-      # Call the updatePositions function directly via the global method
-      # The controller updates positions to 1-indexed values
-      page.evaluate_script(<<~JS)
-        (function() {
-          const controllerElement = document.querySelector('[data-controller="nested-form"]');
-          const controllers = window.Stimulus.controllers;
-          for (const controller of controllers) {
-            if (controller.element === controllerElement && controller.updatePositions) {
-              controller.updatePositions();
-              return true;
-            }
-          }
-          return false;
-        })()
-      JS
-
-      # Verify positions updated (both should be 1 and 2)
-      position_inputs = all('input[name*="[position]"]', visible: false)
-      positions = position_inputs.map { |input| input.value.to_i }
+      positions = all('input[name*="[position]"]', visible: false).map { |input| input.value.to_i }
       expect(positions).to eq([1, 2])
     end
 
@@ -71,7 +64,7 @@ RSpec.describe 'Drag & Drop Sorting', type: :system do
       # Wait for items to appear
       expect(page).to have_css('.nested-fields', count: 2)
 
-      page.execute_script("window.sortFired = false")
+      page.execute_script('window.sortFired = false')
       page.execute_script("document.addEventListener('nested-form:after-sort', () => { window.sortFired = true })")
 
       # Dispatch the after-sort event manually
