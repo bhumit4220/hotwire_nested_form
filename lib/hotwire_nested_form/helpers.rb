@@ -2,10 +2,12 @@
 
 require_relative 'helpers/add_association'
 require_relative 'helpers/remove_association'
+require_relative 'helpers/duplicate_association'
 
 module HotwireNestedForm
   module Helpers
     include AddAssociation
     include RemoveAssociation
+    include DuplicateAssociation
   end
 end

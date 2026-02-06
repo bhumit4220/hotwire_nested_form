@@ -31,16 +31,22 @@
           positionField: { type: String, default: "position" },
           sortHandle: { type: String, default: "" },
           animation: { type: String, default: "" },
-          animationDuration: { type: Number, default: 300 }
+          animationDuration: { type: Number, default: 300 },
+          a11y: { type: Boolean, default: true }
         }
 
         connect() {
+          if (this.a11yValue) this.setupAccessibility()
           this.updateButtonStates()
           if (this.sortableValue) this.initializeSortable()
         }
 
         disconnect() {
           if (this.sortableInstance) this.sortableInstance.destroy()
+          if (this.liveRegion) {
+            this.liveRegion.remove()
+            this.liveRegion = null
+          }
         }
 
         get currentCount() {
@@ -118,6 +124,12 @@
 
           this.dispatch("after-remove", { detail: { wrapper } })
           this.updateButtonStates()
+
+          if (this.a11yValue) {
+            const addButton = this.element.querySelector('[data-action*="nested-form#add"]')
+            if (addButton) addButton.focus()
+            this.announce(`Item removed. ${this.currentCount} remaining.`)
+          }
         }
 
         getTemplate(trigger) {
@@ -170,6 +182,113 @@
 
           if (this.animationValue) {
             this.animateIn(wrapper)
+          }
+
+          if (this.a11yValue) {
+            this.focusFirstInput(wrapper)
+            this.announce(`Item ${this.currentCount} added.`)
+          }
+        }
+
+        // Duplicate
+
+        duplicate(event) {
+          event.preventDefault()
+
+          if (this.currentCount >= this.maxValue) {
+            this.dispatch("limit-reached", {
+              detail: { limit: this.maxValue, current: this.currentCount }
+            })
+            return
+          }
+
+          const wrapper = event.currentTarget.closest(`.${this.wrapperClassValue}`)
+          if (!wrapper) return
+
+          const beforeEvent = this.dispatch("before-duplicate", {
+            cancelable: true,
+            detail: { source: wrapper }
+          })
+
+          if (beforeEvent.defaultPrevented) return
+
+          const clone = wrapper.cloneNode(true)
+          const newId = new Date().getTime()
+
+          this.prepareClone(clone, newId)
+
+          wrapper.after(clone)
+
+          this.dispatch("after-duplicate", {
+            detail: { source: wrapper, clone: clone }
+          })
+
+          if (this.animationValue) {
+            this.animateIn(clone)
+          }
+
+          this.updateButtonStates()
+          if (this.sortableValue) this.updatePositions()
+
+          if (this.a11yValue) {
+            this.focusFirstInput(clone)
+            this.announce("Item duplicated.")
+          }
+        }
+
+        prepareClone(clone, newId) {
+          const idInput = clone.querySelector("input[name*='[id]'][type='hidden']")
+          if (idInput) idInput.remove()
+
+          const destroyInput = clone.querySelector("input[name*='_destroy']")
+          if (destroyInput) destroyInput.value = "false"
+
+          const elements = clone.querySelectorAll("input, select, textarea, label")
+          elements.forEach(el => {
+            if (el.name) {
+              el.name = el.name.replace(/\[\d+\]/, `[${newId}]`)
+            }
+            if (el.id) {
+              el.id = el.id.replace(/_\d+_/, `_${newId}_`)
+            }
+            if (el.htmlFor) {
+              el.htmlFor = el.htmlFor.replace(/_\d+_/, `_${newId}_`)
+            }
+          })
+
+          clone.style.display = ""
+        }
+
+        // Accessibility
+
+        setupAccessibility() {
+          this.element.setAttribute("role", "group")
+          if (!this.element.getAttribute("aria-label")) {
+            this.element.setAttribute("aria-label", "Nested form fields")
+          }
+
+          this.liveRegion = document.createElement("div")
+          this.liveRegion.setAttribute("aria-live", "polite")
+          this.liveRegion.setAttribute("aria-atomic", "true")
+          this.liveRegion.classList.add("nested-form-live-region")
+          this.liveRegion.style.cssText = "position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)"
+          this.element.appendChild(this.liveRegion)
+        }
+
+        announce(message) {
+          if (!this.liveRegion) return
+          this.liveRegion.textContent = ""
+          requestAnimationFrame(() => {
+            this.liveRegion.textContent = message
+          })
+        }
+
+        focusFirstInput(wrapper) {
+          const focusable = wrapper.querySelector(
+            'input:not([type="hidden"]), select, textarea'
+          )
+          if (focusable) {
+            setTimeout(() => focusable.focus(), 50)
           }
         }
 

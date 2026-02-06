@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-02-06
+
+### Added
+- Accessibility (a11y) support enabled by default
+  - `data-nested-form-a11y-value` - enable/disable accessibility features (default: `true`)
+  - `role="group"` and `aria-label` automatically set on controller element
+  - Live region (`aria-live="polite"`) for screen reader announcements
+  - Focus management: first input focused after add, add button focused after remove
+  - Announcements: "Item N added.", "Item removed. N remaining.", "Item duplicated."
+- Duplicate/Clone nested items
+  - `link_to_duplicate_association` Ruby helper
+  - `nested-form#duplicate` Stimulus action
+  - Clones item with field values, generates new index, clears persisted record ID
+  - Respects max limit
+  - New events: `nested-form:before-duplicate` (cancelable), `nested-form:after-duplicate`
+
 ## [1.4.0] - 2026-02-06
 
 ### Added

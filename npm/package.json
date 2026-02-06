@@ -1,6 +1,6 @@
 {
   "name": "hotwire-nested-form-stimulus",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Stimulus controller for dynamic nested forms - works with Rails, React, Vue, or any Stimulus app",
   "main": "src/index.js",
   "module": "src/index.js",

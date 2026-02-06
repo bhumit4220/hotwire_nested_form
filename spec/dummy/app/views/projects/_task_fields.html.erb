@@ -3,5 +3,6 @@
   <span class="drag-handle" style="cursor: grab; user-select: none;">☰</span>
   <%= f.label :name, "Task Name" %>
   <%= f.text_field :name %>
+  <%= link_to_duplicate_association "Duplicate", f, class: "duplicate-task-link" %>
   <%= link_to_remove_association "Remove", f, class: "remove-task-link" %>
 </div>
