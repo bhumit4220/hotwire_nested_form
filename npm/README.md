@@ -64,6 +64,40 @@ application.register("nested-form", NestedFormController)
 | `data-nested-form-max-value` | Maximum items allowed | unlimited |
 | `data-nested-form-limit-behavior-value` | `"disable"`, `"hide"`, or `"error"` | `"disable"` |
 
+### Drag & Drop Sorting
+
+Requires [SortableJS](https://sortablejs.github.io/Sortable/):
+
+```bash
+npm install sortablejs
+```
+
+```javascript
+import Sortable from 'sortablejs'
+window.Sortable = Sortable
+```
+
+```html
+<div data-controller="nested-form"
+     data-nested-form-sortable-value="true"
+     data-nested-form-sort-handle-value=".drag-handle">
+
+  <div id="items">
+    <div class="nested-fields">
+      <input type="hidden" name="items[][position]" value="1">
+      <span class="drag-handle">☰</span>
+      <!-- other fields -->
+    </div>
+  </div>
+</div>
+```
+
+| Attribute | Default | Description |
+|-----------|---------|-------------|
+| `data-nested-form-sortable-value` | `false` | Enable sorting |
+| `data-nested-form-position-field-value` | `"position"` | Position field name |
+| `data-nested-form-sort-handle-value` | (none) | Drag handle selector |
+
 ### Events
 
 | Event | Cancelable | Detail |
@@ -74,6 +108,8 @@ application.register("nested-form", NestedFormController)
 | `nested-form:after-remove` | No | `{ wrapper }` |
 | `nested-form:limit-reached` | No | `{ limit, current }` |
 | `nested-form:minimum-reached` | No | `{ minimum, current }` |
+| `nested-form:before-sort` | Yes | `{ item, oldIndex }` |
+| `nested-form:after-sort` | No | `{ item, oldIndex, newIndex }` |
 
 ### Example: Listen for Events
 
